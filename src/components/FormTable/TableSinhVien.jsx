@@ -1,25 +1,12 @@
 import React from "react";
-import { Table, Input } from "antd";
-import { removeVietnameseTones } from "../../utils/util";
-const { Search } = Input;
+import { Table } from "antd";
 
 const TableSinhVien = ({
   arrSinhVien,
-  setArrSinhVien,
+  arrSearchResults,
   handleDeleteSinhVien,
   handleGetSinhVien,
 }) => {
-  const onSearch = (value) => {
-    const newKeyWord = removeVietnameseTones(value.toLowerCase().trim());
-    const newArrSinhVien = [...arrSinhVien];
-    let arrSinhVienFilter = newArrSinhVien.filter((item) => {
-      let newTenSinhVien = removeVietnameseTones(
-        item.name.toLowerCase().trim()
-      );
-      return newTenSinhVien.includes(newKeyWord);
-    });
-    setArrSinhVien(arrSinhVienFilter);
-  };
   // const data = [];
   const columns = [
     {
@@ -67,20 +54,13 @@ const TableSinhVien = ({
         );
       },
     },
-    {
-      title: (
-        <Search
-          placeholder="Nhập tên sinh viên"
-          allowClear
-          onSearch={onSearch}
-          style={{
-            width: 200,
-          }}
-        />
-      ),
-    },
   ];
-  return <Table columns={columns} dataSource={arrSinhVien} />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={arrSearchResults.length == 0 ? arrSinhVien : arrSearchResults}
+    />
+  );
 };
 
 export default TableSinhVien;

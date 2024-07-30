@@ -3,11 +3,19 @@ import InputCustom from "./InputCustom";
 import TableSinhVien from "./TableSinhVien";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { getValueLocalStorage, setValueLocalStorage } from "../../utils/util";
+import { Input } from "antd";
+const { Search } = Input;
+import {
+  getValueLocalStorage,
+  removeVietnameseTones,
+  setValueLocalStorage,
+} from "../../utils/util";
 
 const Form = () => {
   const [arrSinhVien, setArrSinhVien] = useState([]);
   const [sinhVien, setSinhVien] = useState();
+  const [arrSearchResults, setArrSearchResults] = useState([]);
+
   const {
     handleBlur,
     handleChange,
@@ -59,7 +67,6 @@ const Form = () => {
     const data = getValueLocalStorage("arrSinhVien");
     data && setArrSinhVien(data);
   }, []);
-
   useEffect(() => {
     sinhVien && setValues(sinhVien);
   }, [sinhVien]);
@@ -88,9 +95,22 @@ const Form = () => {
     }
   };
 
+  const onSearch = (value) => {
+    const newKeyWord = removeVietnameseTones(value.toLowerCase().trim());
+    const newArrSinhVien = [...arrSinhVien];
+    let arrSearch = newArrSinhVien.filter((item) => {
+      let newTenSinhVien = removeVietnameseTones(
+        item.name.toLowerCase().trim()
+      );
+      return newTenSinhVien.includes(newKeyWord);
+    });
+    setArrSearchResults(arrSearch);
+  };
+
+  console.log(arrSearchResults);
   return (
-    <div className="container mx-auto py-5">
-      <form className="mb-5" onSubmit={handleSubmit}>
+    <div className="container py-5">
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-6">
           <InputCustom
             contentLabel="Mã số sinh viên"
@@ -132,41 +152,50 @@ const Form = () => {
             errors={errors.email}
             touched={touched.email}
           />
-          <div className="space-x-5">
-            <button
-              type="submit"
-              className="py-2 px-5 bg-black text-white rounded-lg hover:bg-green-500 duration-500"
-            >
-              Thêm sinh viên
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="py-2 px-5 bg-red-500 text-white rounded-lg hover:bg-green-500 duration-500"
-            >
-              Reset form
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!isValid) {
-                  return;
-                }
-                handleUpdateSinhVien(values.mssv);
-                handleReset();
-              }}
-              className="py-2 px-5 bg-yellow-500 text-white rounded-lg hover:bg-green-500 duration-500"
-            >
-              Cập nhật sinh viên
-            </button>
-          </div>
+        </div>
+        <div className="space-x-5 my-5 flex items-center">
+          <button
+            type="submit"
+            className="py-2 px-5 bg-black text-white rounded-lg hover:bg-green-500 duration-500"
+          >
+            Thêm sinh viên
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="py-2 px-5 bg-red-500 text-white rounded-lg hover:bg-green-500 duration-500"
+          >
+            Reset form
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!isValid) {
+                return;
+              }
+              handleUpdateSinhVien(values.mssv);
+              handleReset();
+            }}
+            className="py-2 px-5 bg-yellow-500 text-white rounded-lg hover:bg-green-500 duration-500"
+          >
+            Cập nhật sinh viên
+          </button>
+          <Search
+            placeholder="Nhập tên sinh viên"
+            allowClear
+            enterButton
+            onSearch={onSearch}
+            style={{
+              width: 250,
+            }}
+          />
         </div>
       </form>
       <TableSinhVien
         arrSinhVien={arrSinhVien}
+        arrSearchResults={arrSearchResults}
         handleDeleteSinhVien={handleDeleteSinhVien}
         handleGetSinhVien={handleGetSinhVien}
-        setArrSinhVien={setArrSinhVien}
       />
     </div>
   );
