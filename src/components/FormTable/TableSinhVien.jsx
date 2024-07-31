@@ -58,7 +58,7 @@ const TableSinhVien = ({
   return (
     <Table
       columns={columns}
-      dataSource={arrSearchResults.length == 0 ? arrSinhVien : arrSearchResults}
+      dataSource={arrSearchResults ? arrSearchResults : arrSinhVien}
     />
   );
 };

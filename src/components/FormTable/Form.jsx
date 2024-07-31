@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import InputCustom from "./InputCustom";
 import TableSinhVien from "./TableSinhVien";
 import { useFormik } from "formik";
@@ -14,7 +14,7 @@ import {
 const Form = () => {
   const [arrSinhVien, setArrSinhVien] = useState([]);
   const [sinhVien, setSinhVien] = useState();
-  const [arrSearchResults, setArrSearchResults] = useState([]);
+  const [arrSearchResults, setArrSearchResults] = useState();
 
   const {
     handleBlur,
@@ -92,22 +92,22 @@ const Form = () => {
       newArrSinhVien[index] = values;
       setArrSinhVien(newArrSinhVien);
       setValueLocalStorage("arrSinhVien", newArrSinhVien);
+      handleReset();
     }
   };
 
   const onSearch = (value) => {
     const newKeyWord = removeVietnameseTones(value.toLowerCase().trim());
     const newArrSinhVien = [...arrSinhVien];
-    let arrSearch = newArrSinhVien.filter((item) => {
+    let arrFilterName = newArrSinhVien.filter((item) => {
       let newTenSinhVien = removeVietnameseTones(
         item.name.toLowerCase().trim()
       );
       return newTenSinhVien.includes(newKeyWord);
     });
-    setArrSearchResults(arrSearch);
+    setArrSearchResults(arrFilterName);
   };
 
-  console.log(arrSearchResults);
   return (
     <div className="container py-5">
       <form onSubmit={handleSubmit}>
@@ -174,7 +174,6 @@ const Form = () => {
                 return;
               }
               handleUpdateSinhVien(values.mssv);
-              handleReset();
             }}
             className="py-2 px-5 bg-yellow-500 text-white rounded-lg hover:bg-green-500 duration-500"
           >
